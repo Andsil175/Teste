@@ -1,0 +1,46 @@
+# Nome do nosso workflow. É o que aparecerá na lista da aba Actions.
+name: Python CI Pipeline
+
+# "on" define o GATILHO: O que faz a automação começar?
+on:
+  # A automação vai rodar sempre que alguém fizer um "push" (enviar código)...
+  push:
+    branches: [ "main" ] # ... especificamente para o branch "main".
+  # E também vai rodar quando alguém abrir um "Pull Request"...
+  pull_request:
+    branches: [ "main" ] # ... para o branch "main".
+
+# "jobs" define os trabalhos que a automação irá executar.
+jobs:
+  # Damos um nome para o nosso trabalho. Pode ser qualquer nome.
+  build-and-test:
+    # "runs-on" diz ao GitHub para preparar uma máquina virtual limpa com Ubuntu.
+    # É como ter um computador novo só para rodar nossos testes.
+    runs-on: ubuntu-latest
+
+    # "steps" são os passos sequenciais que o nosso robô irá executar.
+    steps:
+    # 1º Passo: Baixar o nosso código
+    - name: Checkout do código
+      # "uses" reutiliza uma ação pronta da comunidade. Esta baixa o código.
+      uses: actions/checkout@v3
+
+    # 2º Passo: Preparar o ambiente Python
+    - name: Configurar Python 3.9
+      # Esta ação instala a versão do Python que queremos na máquina virtual.
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    # 3º Passo: Instalar as ferramentas necessárias
+    - name: Instalar dependências
+      # "run" executa comandos no terminal da máquina virtual.
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+
+    # 4º Passo: Rodar os testes!
+    - name: Rodar os testes com PyTest
+      # Este é o comando que executa os testes que criamos na aula passada.
+      run: |
+        pytest
